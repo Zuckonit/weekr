@@ -1,4 +1,9 @@
 weekr
 =====
 
-周报生成脚本
+> weekly report
+
+周报内容来源
+============
+> * svn log
+> * GTD (how about vim-airline-tomato)
