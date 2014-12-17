@@ -36,10 +36,10 @@ class LogParser(object):
         self.edate = edate
 
     def getcmd(self):
-        raise NotImplementError
+        raise NotImplementedError
 
     def yield_log(self):
-        raise
+        raise NotImplementedError
 
     def get_log_by_date(self):
         """
