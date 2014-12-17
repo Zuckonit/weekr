@@ -9,19 +9,19 @@ from collections import defaultdict
 
 
 def get_xml(usr=None, pwd=None, who=None, path=None, sdate=None, edate=None):
+    cmd = u'svn log'
+    if path:
+        cmd += u' {0}'.format(path)
+    if usr:
+        cmd += u' --username {0}'.format(usr)
+    if pwd:
+        cmd += u' --password {0}'.format(pwd)
+    if sdate and edate:
+        cmd += u' -r {%s}:{%s}'%(sdate, edate)
+    cmd += u' --xml'
+    cmd += u' --search {0}'.format(who or usr)
+    print cmd
     try:
-        cmd = u'svn log'
-        if path:
-            cmd += u' {0}'.format(path)
-        if usr:
-            cmd += u' --username {0}'.format(usr)
-        if pwd:
-            cmd += u' --password {0}'.format(pwd)
-        if sdate and edate:
-            cmd += u' -r {%s}:{%s}'%(sdate, edate)
-        cmd += u' --xml'
-        cmd += u' --search {0}'.format(who or usr)
-        print cmd
         return commands.getstatusoutput(cmd)
     except Exception as e:
         print e
