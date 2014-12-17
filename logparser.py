@@ -5,6 +5,7 @@ import time
 import datetime
 import commands
 import xml.etree.ElementTree as ET
+from collections import defaultdict
 
 
 def get_xml(usr=None, pwd=None, who=None, path=None, sdate=None, edate=None):
@@ -33,7 +34,25 @@ def parse_xml(stdout):
 
     root = ET.fromstring(stdout)
     for log in root.findall('logentry'):
-        yield log.get('revision'), log.find('author').text, log.find('date').text, log.find('msg').text
+        rev = log.get('revision')
+        author = log.find('author').text
+        date = log.find('date').text[:10]
+        msg = log.find('msg').text
+        yield rev, author, date, msg
+
+
+def parse_xml_by_date(stdout):
+    """
+    group by date
+    {
+        'date1': [(rev, author, msg), (rev, author, msg)],
+        'date2': [(rev, author, msg), (rev, author, msg)] 
+    }
+    """
+    logs = defaultdict(list)
+    for rev, author, date, msg in parse_xml(stdout):
+        logs[date].append((rev, author, msg))
+    return logs
 
 
 def get_date_period(bdays):
@@ -86,5 +105,9 @@ if __name__ == '__main__':
         sdate=sdate,
         edate=edate
     )
+    print 'parse by line......'
     for version, author, date, msg in parse_xml(xml_str):
         print version, author, date, msg
+    
+    print 'parse by date......'
+    print parse_xml_by_date(xml_str)
