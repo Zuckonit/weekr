@@ -136,15 +136,15 @@ def cmdline(arg):
     from optparse import OptionParser
     parser = OptionParser(usage="usage: %prog", version="%prog 0.0.3")
     parser.add_option('-u', "--username", dest='username', metavar='USER',
-            default=None, help='username of your svn repo')
+            default=None, help='username of your repo')
     parser.add_option('-p', "--password", dest='password', metavar='PSWD',
-            default=None, help='password of your svn repo')
+            default=None, help='password of your repo')
     parser.add_option('-w', "--who", dest='who', metavar='WHO',
             default=None, help='whose log you want to see, if its None, then use usrname as default')
     parser.add_option('-t', "--version-control-type", dest='vtype', metavar='TYPE',
             default="svn", help='your version control system')
     parser.add_option('-d', "--repo-path", dest='path', metavar='PATH',
-            default=None, help='path of your svn repo which you want to get log')
+            default=None, help='path of your repo which you want to get log')
     parser.add_option('-s', "--start-date", dest='sdate', metavar='SDATE',
             default=None, help='start date')
     parser.add_option('-e', "--end-date", dest='edate', metavar='EDATE',
