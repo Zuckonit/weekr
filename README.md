@@ -10,5 +10,5 @@ content source
 
 TODO
 ===============
-> use markdown or html as tempalte, then convert it to pdf
-> auto email
+> * use markdown or html as tempalte, then convert it to pdf
+> * auto email
