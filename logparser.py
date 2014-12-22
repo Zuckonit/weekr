@@ -5,11 +5,15 @@ import time
 import datetime
 import commands
 import xml.etree.ElementTree as ET
-from collections import defaultdict
+try:
+    from collections import OrderedDict
+except ImportError:
+    from ordereddict import OrderedDict
 
 
 
 class Command(object):
+
     def __init__(self, cmd):
         self.__cmd = cmd
 
@@ -49,9 +53,12 @@ class LogParser(object):
             'date2': [(rev, author, msg), (rev, author, msg)]
         }
         """
-        logs = defaultdict(list)
+        logs = OrderedDict()
         for rev, author, date, msg in self.yield_log():
-            logs[date].append((rev, author, msg))
+            if date in logs:
+                logs[date].append((rev, author, msg))
+            else:
+                logs[date] = [(rev, author, msg)]
         return logs
 
 
@@ -91,6 +98,7 @@ class SVNLogParser(LogParser):
 
 
 class GITLogParser(LogParser):
+
     def __init__(self, usr=None, pwd=None, who=None, path=None, sdate=None, edate=None):
         super(GITLogParser, self).__init__(usr=usr, pwd=pwd,
                 who=who, path=path, sdate=sdate, edate=edate)
