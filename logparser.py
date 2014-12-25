@@ -128,12 +128,12 @@ class GITLogParser(LogParser):
             yield rev, self.who or self.usr , date, msg
 
 
-class TomatoLogParser(LogParser):
+class TodoLogParser(LogParser):
     """
-    GTD: vim-airline-tomato
+    GTD: my `vim-airline-todo` plugin
     """
     def __init__(self, usr=None, pwd=None, who=None, path=None, sdate=None, edate=None):
-        super(TomatoLogParser, self).__init__(usr=usr, pwd=pwd,
+        super(TodoLogParser, self).__init__(usr=usr, pwd=pwd,
                 who=who, path=path, sdate=sdate, edate=edate)
     
     @staticmethod
@@ -149,7 +149,7 @@ class TomatoLogParser(LogParser):
         return rev, author, date, msg
 
     def yield_filenames(self, ignore_hide_file=True, ignore_prefix=(), ignore_suffix=()):
-        """params may be useful in future"""
+        """other params may be useful in future"""
         path = osp.expanduser(self.path)
         path = osp.abspath(path)
         if not path or not osp.isdir(path):
@@ -187,7 +187,7 @@ def get_parser_class(vst):
     elif vst == 'git':
         return GITLogParser
     elif vst == 'tomato':
-        return TomatoLogParser
+        return TodoLogParser
     return None
 
 
