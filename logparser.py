@@ -186,7 +186,7 @@ def get_parser_class(vst):
         return SVNLogParser
     elif vst == 'git':
         return GITLogParser
-    elif vst == 'tomato':
+    elif vst == 'todo':
         return TodoLogParser
     return None
 
