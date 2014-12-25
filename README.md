@@ -6,7 +6,7 @@ weekr
 content source
 ==============
 > * svn/git log
-> * GTD (how about vim-airline-tomato)
+> * GTD (how about [vim-airline-todo](https://github.com/Zuckonit/vim-airline-todo))
 
 TODO
 ===============
