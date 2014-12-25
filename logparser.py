@@ -3,7 +3,7 @@
 
 import os
 import os.path as osp
-from pwd import getpwuid
+import platform
 import time
 import datetime
 import commands
@@ -13,6 +13,10 @@ try:
 except ImportError:
     from ordereddict import OrderedDict
 
+OS_SYSTEM = platform.system()
+IS_WINDOWS = OS_SYSTEM == "Windows"
+if IS_WINDOWS:
+    from pwd import getpwuid
 
 
 class Command(object):
@@ -144,7 +148,10 @@ class TodoLogParser(LogParser):
         ltime = time.localtime(mtime)
         date  = time.strftime('%Y-%m-%d', ltime)
         msg   = osp.basename(filename)
-        author= getpwuid(os.stat(filename).st_uid).pw_name
+        if not IS_WINDOWS:
+            author = getpwuid(os.stat(filename).st_uid).pw_name
+        else:
+            author = None
         rev   = 0
         return rev, author, date, msg
 
@@ -171,7 +178,7 @@ class TodoLogParser(LogParser):
         for t in tasks:
             rev, author, date, msg = self.get_file_info(t)
             if self.sdate <= date <= self.edate:
-                yield date, msg, self.who or author, rev
+                yield date, msg, self.who or self.username or author or 'unkown', rev
 
 
 
@@ -186,7 +193,7 @@ def get_parser_class(vst):
         return SVNLogParser
     elif vst == 'git':
         return GITLogParser
-    elif vst == 'todo':
+    elif vst == 'tomato':
         return TodoLogParser
     return None
 
