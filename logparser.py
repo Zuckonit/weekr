@@ -15,7 +15,7 @@ except ImportError:
 
 OS_SYSTEM = platform.system()
 IS_WINDOWS = OS_SYSTEM == "Windows"
-if IS_WINDOWS:
+if not IS_WINDOWS:
     from pwd import getpwuid
 
 
