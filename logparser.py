@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
+import os
+import os.path as osp
+from pwd import getpwuid
 import time
 import datetime
 import commands
@@ -40,7 +43,7 @@ class LogParser(object):
         self.edate = edate
 
     def getcmd(self):
-        raise NotImplementedError
+        pass
 
     def yield_log(self):
         raise NotImplementedError
@@ -96,7 +99,6 @@ class SVNLogParser(LogParser):
             yield rev, author, date, msg
 
 
-
 class GITLogParser(LogParser):
 
     def __init__(self, usr=None, pwd=None, who=None, path=None, sdate=None, edate=None):
@@ -126,6 +128,53 @@ class GITLogParser(LogParser):
             yield rev, self.who or self.usr , date, msg
 
 
+class TomatoLogParser(LogParser):
+    """
+    GTD: vim-airline-tomato
+    """
+    def __init__(self, usr=None, pwd=None, who=None, path=None, sdate=None, edate=None):
+        super(TomatoLogParser, self).__init__(usr=usr, pwd=pwd,
+                who=who, path=path, sdate=sdate, edate=edate)
+    
+    @staticmethod
+    def get_file_info(filename):
+        if not filename or not osp.isfile(filename):
+            return None, None, None, None
+        mtime = osp.getmtime(filename)       
+        ltime = time.localtime(mtime)
+        date  = time.strftime('%Y-%m-%d', ltime)
+        msg   = osp.basename(filename)
+        author= getpwuid(os.stat(filename).st_uid).pw_name
+        rev   = 0
+        return rev, author, date, msg
+
+    def yield_filenames(self, ignore_hide_file=True, ignore_prefix=(), ignore_suffix=()):
+        """params may be useful in future"""
+        path = osp.expanduser(self.path)
+        path = osp.abspath(path)
+        if not path or not osp.isdir(path):
+            return
+
+        for root, dirs, fnames in os.walk(path):
+            for f in fnames:
+                if ignore_hide_file and f.startswith('.'):
+                    continue
+                if f.endswith(ignore_suffix):
+                    continue
+                if f.startswith(ignore_prefix):
+                    continue
+                
+                yield osp.join(root, f)
+
+    def yield_log(self, ignore_hide_file=True, ignore_prefix=(), ignore_suffix=()):
+        tasks = self.yield_filenames(ignore_hide_file, ignore_prefix, ignore_suffix)
+        for t in tasks:
+            rev, author, date, msg = self.get_file_info(t)
+            if self.sdate <= date <= self.edate:
+                yield date, msg, self.who or author, rev
+
+
+
 def get_date_period(bdays):
     sdate =((datetime.datetime.now()-datetime.timedelta(days=bdays)).strftime("%Y-%m-%d"))
     edate = time.strftime("%Y-%m-%d")
@@ -137,6 +186,8 @@ def get_parser_class(vst):
         return SVNLogParser
     elif vst == 'git':
         return GITLogParser
+    elif vst == 'tomato':
+        return TomatoLogParser
     return None
 
 
@@ -165,7 +216,6 @@ def cmdline(arg):
 
 if __name__ == '__main__':
     import sys
-    import os.path as osp
 
     if len(sys.argv) == 1:
         print 'type {0} -h to get help'.format(osp.basename(sys.argv[0]))
