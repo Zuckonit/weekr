@@ -1,6 +1,6 @@
-#!/usr/bin/env python
 # encoding: utf-8
 
+#!/usr/bin/env python
 import os
 import os.path as osp
 import platform
@@ -178,7 +178,7 @@ class TodoLogParser(LogParser):
         for t in tasks:
             rev, author, date, msg = self.get_file_info(t)
             if self.sdate <= date <= self.edate:
-                yield date, msg, self.who or self.username or author or 'unkown', rev
+                yield date, msg, self.who or self.usr or author or 'unkown', rev
 
 
 
